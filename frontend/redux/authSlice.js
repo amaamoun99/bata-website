@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
+import Cookies from 'js-cookie';
 
-// Retrieve JWT from localStorage (if it exists) when initializing state
-const tokenFromStorage = typeof window !== 'undefined' ? localStorage.getItem('jwtToken') : null;
+// Retrieve JWT from cookies (if it exists) when initializing state
+const jwtFromCookies = typeof window !== 'undefined' ? Cookies.get('jwt') : null;
+
 
 const initialState = {
-  token: tokenFromStorage || null,
+  jwt: jwtFromCookies || null,
   user: null,
-  isAuthenticated: !!tokenFromStorage,
+  isAuthenticated: !!jwtFromCookies,
 };
 
 const authSlice = createSlice({
@@ -14,16 +16,16 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess: (state, action) => {
-      state.token = action.payload;
+      state.jwt = action.payload;
       state.isAuthenticated = true;
-      // Store token in localStorage
-      localStorage.setItem('jwtToken', action.payload);
+      // Store jwt in cookies
+      Cookies.set('jwt', action.payload, { expires: 1 }); // Expires in 1 day // Expires in 1 day
     },
     logout: (state) => {
-      state.token = null;
+      state.jwt = null;
       state.isAuthenticated = false;
-      // Remove token from localStorage
-      localStorage.removeItem('jwtToken');
+      // Remove jwt from cookies
+      Cookies.remove('jwt');
     },
   },
 });

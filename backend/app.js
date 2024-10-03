@@ -13,7 +13,10 @@ app.use(express.json());
 //   optionsSuccessStatus: 200, // Some legacy browsers choke on 204
 // };
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // Your frontend URL
+  credentials: true, // Allow credentials (cookies) to be sent
+}));
 
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();

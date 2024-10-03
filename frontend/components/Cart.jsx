@@ -29,7 +29,7 @@ const Cart = () => {
   if (!isCartOpen) return null; // Don't render the cart if it's closed
 
   return (
-    <div className="fixed top-0 right-0 h-full w-64 bg-white shadow-lg p-4 transition-transform transform translate-x-0 flex flex-col justify-between">
+    <div className="fixed top-0 right-0 h-full w-64 bg-white shadow-lg p-4 transition-transform transform translate-x-0 flex flex-col justify-between z-50">
       <button onClick={handleIsOpen} className="text-black font-bold">x</button>
       <div className="flex-grow">
         <h1 className="text-2xl text-black font-bold">Shopping Cart</h1>

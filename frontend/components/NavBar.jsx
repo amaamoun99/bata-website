@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux';
 import { toggleCart } from '../redux/cartSlice'; // Import the toggleCart action
 
 const NavBar = () => {
+
+  
   const dispatch = useDispatch(); // Initialize Redux dispatch
 
   const handleCartToggle = () => {

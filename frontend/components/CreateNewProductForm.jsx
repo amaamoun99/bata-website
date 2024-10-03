@@ -7,7 +7,7 @@ import SubmitButton from './SubmitButton';
 import axios from 'axios';
 
 const CreateNewProductForm = () => {
-  const [selectedValue, setSelectedValue] = useState('');
+  const [productType, setProductType] = useState('');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -17,8 +17,8 @@ const CreateNewProductForm = () => {
   const [error, setErrorMessage] = useState('');
 
   // Get the JWT token from Redux
-  const token = useSelector((state) => state.token.token); // Adjust state path as necessary
- 
+  const token = useSelector((state) => state.auth.jwt);
+
   const options = [
     { label: 'T-shirt', value: 't-shirts' },
     { label: 'Socks', value: 'socks' },
@@ -27,39 +27,58 @@ const CreateNewProductForm = () => {
   ];
 
   const handleSubmit = async (e) => {
- 
     e.preventDefault();
-    console.log(token)
+
+    // Input validation (basic example)
+    if (!name || !price || !productType) {
+      setErrorMessage('Please fill in all required fields.');
+      return;
+    }
+
     try {
+      console.log('Submitting:', {
+        name,
+        price,
+        productType,
+        description,
+        smallStock,
+        mediumStock,
+        largeStock,
+      });
+      console.log('Token:', token);
+
       // Axios request with Authorization header
       const response = await axios.post(
         'http://localhost:3001/api/v1/products',
         {
-           name,
-           price,
-          selectedValue,
-           description,
-           smallStock,
-           mediumStock,
-           largeStock,
+          name,
+          price,
+          productType,
+          description,
+          smallStock,
+          mediumStock,
+          largeStock,
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include JWT token
+            Authorization: `Bearer ${token}`, // Set Authorization header here
           },
+          withCredentials: true,
         }
       );
-      console.log(response.data);
+      
+      console.log('Response:', response.data);
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'An error occurred');
-      console.error('Failed:', error);
+      // Handle error response and set error message
+      setErrorMessage(error.response?.data?.message || 'An error occurred during signup');
+      console.error('Signup failed:', error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <InputField
-        label="name"
+        label="Name"
         type="text"
         id="productName"
         placeholder="Enter product's name"
@@ -67,7 +86,7 @@ const CreateNewProductForm = () => {
         onChange={(e) => setName(e.target.value)}
       />
       <InputField
-        label="price"
+        label="Price"
         type="number"
         id="productPrice"
         placeholder="Enter product's Price"
@@ -75,7 +94,7 @@ const CreateNewProductForm = () => {
         onChange={(e) => setPrice(e.target.value)}
       />
       <InputField
-        label="description"
+        label="Description"
         type="text"
         id="productDescription"
         placeholder="Enter product's Description"
@@ -83,7 +102,7 @@ const CreateNewProductForm = () => {
         onChange={(e) => setDescription(e.target.value)}
       />
       <InputField
-        label="small sized stock"
+        label="Small Sized Stock"
         type="number"
         id="productSmallStock"
         placeholder="Enter the number of small sized stock"
@@ -91,7 +110,7 @@ const CreateNewProductForm = () => {
         onChange={(e) => setSmallStock(e.target.value)}
       />
       <InputField
-        label="medium sized stock"
+        label="Medium Sized Stock"
         type="number"
         id="productMediumStock"
         placeholder="Enter the number of medium sized stock"
@@ -99,10 +118,10 @@ const CreateNewProductForm = () => {
         onChange={(e) => setMediumStock(e.target.value)}
       />
       <InputField
-        label="Large sized stock"
+        label="Large Sized Stock"
         type="number"
         id="productLargeStock"
-        placeholder="Enter the number of Large sized stock"
+        placeholder="Enter the number of large sized stock"
         value={largeStock}
         onChange={(e) => setLargeStock(e.target.value)}
       />
@@ -111,12 +130,14 @@ const CreateNewProductForm = () => {
         name="product type"
         className="p-2 border border-gray-300 rounded"
         placeholder="Please select an option"
-        value={selectedValue}
-        onChange={(event) => setSelectedValue(event.target.value)}
+        value={productType}
+        onChange={(event) => setProductType(event.target.value)}
       />
-      <p>Selected Value: {selectedValue}</p>
+      <p>Selected Value: {productType}</p>
 
-      <SubmitButton text="submit" />
+      {error && <p className="text-red-500">{error}</p>} {/* Display error messages */}
+
+      <SubmitButton text="Submit" />
     </form>
   );
 };
